@@ -14,5 +14,4 @@ FROM
 WHERE
     style LIKE '%Glam rock%'
 ORDER BY
-    lifespan DESC,
-    band_name ASC;
+    lifespan DESC;
