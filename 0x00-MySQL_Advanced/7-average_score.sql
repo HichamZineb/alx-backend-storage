@@ -1,5 +1,5 @@
 -- Create a stored procedure ComputeAverageScoreForUser
-DELIMITER //
+DELIMITER $$
 
 DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
 CREATE PROCEDURE ComputeAverageScoreForUser (IN user_id INT)
