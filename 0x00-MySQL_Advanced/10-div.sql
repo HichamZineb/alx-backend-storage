@@ -4,11 +4,14 @@
 --   a - INT: Numerator
 --   b - INT: Denominator
 -- Returns: DECIMAL(10, 6) - Result of the division or 0 if the denominator is 0
-CREATE FUNCTION SafeDiv(a INT, b INT) RETURNS DECIMAL(10, 6)
+
+DELIMITER //
+
+DROP FUNCTION IF EXISTS SafeDiv;
+CREATE FUNCTION SafeDiv(a INT, b INT)
+RETURNS FLOAT DETERMINISTIC
 BEGIN
-    IF b = 0 THEN
-        RETURN 0;
-    ELSE
-        RETURN a / b;
-    END IF;
-END;
+	RETURN (IF (b = 0, 0, a / b));
+END //
+
+DELIMITER ;
