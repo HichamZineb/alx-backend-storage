@@ -1,0 +1,4 @@
+#!/bin/bash
+# my comment
+
+echo 'show dbs' | mongo
