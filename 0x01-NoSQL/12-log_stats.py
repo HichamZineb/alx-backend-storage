@@ -6,6 +6,8 @@ Log stats
 from pymongo import MongoClient
 
 if __name__ == "__main__":
+    """Display statistics about Nginx logs stored in MongoDB."""
+
     client = MongoClient('mongodb://127.0.0.1:27017')
     logs_collection = client.logs.nginx
 
