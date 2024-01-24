@@ -1,42 +1,42 @@
 #!/usr/bin/env python3
 """
-Web Cache Module
-
-Defines a decorator to cache and track accessed URLs.
+Caching request module with Tracking
 """
-
-import requests
 import redis
+import requests
+from functools import wraps
 from typing import Callable
 
-# Redis client instance
-redis_client = redis.Redis()
 
-
-def cache_and_track(fn: Callable) -> Callable:
+def track_and_cache_page(fn: Callable) -> Callable:
+    """ Decorator for caching and tracking page requests
     """
-    Decorator function to cache and track accessed URLs.
-
-    Args:
-        fn (Callable): The function to be decorated.
-
-    Returns:
-        Callable: Decorated function.
-    """
+    @wraps(fn)
     def wrapper(url: str) -> str:
-        count_key, content_key = f"count:{url}", f"content:{url}"
+        """ Wrapper that:
+            - checks if a URL's data is cached
+            - tracks how many times get_page is called
+        """
+        redis_client = redis.Redis()
+        redis_key_count = f'count:{url}'
+        redis_key_page = f'{url}'
 
-        cached_content = redis_client.get(content_key)
-        if cached_content:
-            redis_client.incr(count_key)
-            return cached_content.decode("utf-8")
+        redis_client.incr(redis_key_count)
+        cached_page = redis_client.get(redis_key_page)
 
-        response = requests.get(url)
-        content = response.text
+        if cached_page:
+            return cached_page.decode('utf-8')
 
-        redis_client.setex(content_key, 10, content)
-        redis_client.incr(count_key)
+        response = fn(url)
+        redis_client.setex(redis_key_page, 10, response)
 
-        return content
-
+        return response
     return wrapper
+
+
+@track_and_cache_page
+def get_page(url: str) -> str:
+    """ Makes an HTTP request to a given endpoint
+    """
+    response = requests.get(url)
+    return response.text
